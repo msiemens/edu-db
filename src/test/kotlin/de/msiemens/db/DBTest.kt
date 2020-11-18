@@ -38,6 +38,7 @@ internal class DBTest {
         assertEquals(listOf(row(s("id"))), db.exec("show index from names"))
         assertEquals(listOf(row(s("John"))), db.exec("select value from names where id = 1"))
         assertEquals(listOf(row(s("Jane"))), db.exec("select value from names where id = 2"))
+        assertEquals(listOf(row(s("Jane"))), db.exec("select value from names where id != 1"))
 
         assertEquals(empty, db.exec("update names set id = 4 where id = 1"))
         assertEquals(listOf(row(s("John"))), db.exec("select value from names where id = 4"))
