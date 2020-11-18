@@ -1,0 +1,51 @@
+package de.msiemens.db.sql
+
+data class Token(val type: Type, val value: String? = null) {
+    enum class Type(val token: String? = null) {
+        AND("and"),
+        BY("by"),
+        COMMA(","),
+        CREATE("create"),
+        DELETE("delete"),
+        DESCRIBE("describe"),
+        DROP("drop"),
+        FROM("from"),
+        INDEX("index"),
+        INSERT("insert"),
+        INTEGER("integer"),
+        INTO("into"),
+        LIKE("like"),
+        LIMIT("limit"),
+        OFFSET("offset"),
+        ON("on"),
+        ORDER("order"),
+        OR("or"),
+        PAREN_LEFT("("),
+        PAREN_RIGHT(")"),
+        SELECT("select"),
+        SEMICOLON(";"),
+        SET("set"),
+        SHOW("show"),
+        STAR("*"),
+        STRING("string"),
+        TABLES("tables"),
+        TABLE("table"),
+        UPDATE("update"),
+        VALUES("values"),
+        WHERE("where"),
+
+        ORDER_ASC("asc"),
+        ORDER_DESC("desc"),
+
+        OP_EQ("="),
+        OP_GE(">="),
+        OP_GT(">"),
+        OP_LE("<="),
+        OP_LT("<"),
+        OP_NE("!="),
+
+        VAL_INT,
+        VAL_STRING,
+        EOF,
+    }
+}
