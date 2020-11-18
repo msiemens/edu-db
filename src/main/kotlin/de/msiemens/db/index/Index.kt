@@ -64,8 +64,8 @@ class Index<T : Value> {
             }
         } else {
             when (op) {
-                Operator.EQ, Operator.LT, Operator.LE -> cursor(current.right, condition)
-                Operator.GT, Operator.GE -> all(current.left) + indices(current) + cursor(current.left, condition)
+                Operator.EQ, Operator.GT, Operator.GE -> cursor(current.right, condition)
+                Operator.LT, Operator.LE -> all(current.left) + indices(current) + cursor(current.right, condition)
                 Operator.NE -> cursor(current.right, condition) + indices(current) + all(current.left)
                 Operator.LIKE -> error("LIKE condition not supported with index")
             }
