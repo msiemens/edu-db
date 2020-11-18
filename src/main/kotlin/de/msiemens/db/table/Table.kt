@@ -10,13 +10,20 @@ class Table(val schema: Schema) {
     internal var indexes: MutableMap<String, Index<in Value>> = mutableMapOf()
     private var indexesForColumn: MutableMap<String, String> = mutableMapOf()
 
-    fun cursor(start: Int? = null): Cursor<Int> {
+    fun cursor(): Cursor<Int> {
+        var start = rows.indexOfFirst { it != null }
+        if (start < 0) {
+            start = rows.size
+        }
+
+        val count = rows.count { it != null }
+
         val emptyRows = rows.withIndex()
             .filter { it.value == null }
             .map { it.index }
             .toSet()
 
-        return TableCursor(start ?: rows.indexOfFirst { it != null }, rows.count { it != null }, emptyRows)
+        return TableCursor(start, count, emptyRows)
     }
 
     fun get(index: Int): Row? = rows.getOrNull(index)
@@ -81,6 +88,7 @@ class Table(val schema: Schema) {
         val index = when (schema.type(column)) {
             ColumnType.STRING -> createIndex<StringValue>(column)
             ColumnType.INT -> createIndex<IntValue>(column)
+            null -> error("No such column $column")
         }
 
         indexes[name] = index as Index<Value>

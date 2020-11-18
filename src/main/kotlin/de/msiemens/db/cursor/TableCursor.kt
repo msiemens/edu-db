@@ -17,5 +17,5 @@ class TableCursor(
         return c
     }
 
-    override fun end(): Boolean = current == length
+    override fun end(): Boolean = current == length + emptyRows.size
 }
