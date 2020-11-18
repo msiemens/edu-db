@@ -32,7 +32,7 @@ class BinaryTree<K : Comparable<K>, V> {
     }
 
     fun remove(value: K) {
-        remove(value, root)
+        root = remove(value, root)
     }
 
     fun fill(rows: List<Pair<K, V>>) {
