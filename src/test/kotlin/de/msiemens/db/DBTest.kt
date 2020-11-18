@@ -21,31 +21,58 @@ internal class DBTest {
 
         assertEquals(empty, db.exec("insert into names values(1, \"John\")"))
         assertEquals(empty, db.exec("insert into names values(2, \"Jane\")"))
+        assertEquals(empty, db.exec("insert into names values(3, \"Jill\")"))
         assertEquals(listOf(row(s("John"))), db.exec("select value from names where id = 1"))
         assertEquals(listOf(row(i(2))), db.exec("select id from names where value = \"Jane\""))
         assertEquals(listOf(row(i(2))), db.exec("select id from names where value like \"Ja%\""))
         assertEquals(
             listOf(
+                row(i(3), s("Jill")),
                 row(i(2), s("Jane")),
                 row(i(1), s("John"))
             ),
             db.exec("select * from names order by id desc")
         )
-        assertEquals(listOf(row(i(2))), db.exec("select id from names order by id desc limit 1"))
-        assertEquals(listOf(row(i(1))), db.exec("select id from names order by id desc limit 1 offset 1"))
+        assertEquals(listOf(row(i(1))), db.exec("select id from names order by id asc limit 1"))
+        assertEquals(listOf(row(i(3))), db.exec("select id from names order by id desc limit 1"))
+        assertEquals(listOf(row(i(3)), row(i(2))), db.exec("select id from names order by id desc limit 2"))
+        assertEquals(listOf(row(i(2))), db.exec("select id from names order by id desc limit 1 offset 1"))
+        assertEquals(listOf(row(s("John"))), db.exec("select value from names where id <= 1"))
+        assertEquals(listOf(row(s("John"))), db.exec("select value from names where id < 2"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where id > 1"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where id != 1"))
+        assertEquals(listOf(row(s("Jill"))), db.exec("select value from names where id != 1 and id != 2"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where value = \"Jane\" or value = \"Jill\""))
+        assertEquals(listOf(row(s("Jill"))), db.exec("select value from names where id > 2"))
+        assertEquals(listOf(row(s("Jill"))), db.exec("select value from names where id >= 3"))
 
         assertEquals(empty, db.exec("create index id on names (id)"))
         assertEquals(listOf(row(s("id"))), db.exec("show index from names"))
         assertEquals(listOf(row(s("John"))), db.exec("select value from names where id = 1"))
+        assertEquals(listOf(row(s("John"))), db.exec("select value from names where id < 2"))
+        assertEquals(listOf(row(s("John"))), db.exec("select value from names where id <= 1"))
         assertEquals(listOf(row(s("Jane"))), db.exec("select value from names where id = 2"))
-        assertEquals(listOf(row(s("Jane"))), db.exec("select value from names where id != 1"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where id != 1"))
+        assertEquals(listOf(row(s("Jane"))), db.exec("select value from names where id > 1 and id < 3"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where (id >= 2) and (id <= 3)"))
+        assertEquals(listOf(row(s("Jill")), row(s("Jane"))), db.exec("select value from names where id > 1"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where id >= 2"))
+        assertEquals(listOf(row(s("John")), row(s("Jane"))), db.exec("select value from names where id < 3"))
+        assertEquals(listOf(row(s("Jane")), row(s("John"))), db.exec("select value from names where id <= 2"))
+
+        assertEquals(empty, db.exec("create index names on names (value)"))
+        assertEquals(listOf(row(i(1))), db.exec("select id from names where value = \"John\""))
+        assertEquals(listOf(row(i(2))), db.exec("select id from names where value = \"Jane\""))
+        assertEquals(listOf(row(i(3))), db.exec("select id from names where value = \"Jill\""))
 
         assertEquals(empty, db.exec("update names set id = 4 where id = 1"))
         assertEquals(listOf(row(s("John"))), db.exec("select value from names where id = 4"))
         assertEquals(empty, db.exec("select value from names where id = 1"))
 
         assertEquals(empty, db.exec("delete from names where id = 4"))
-        assertEquals(empty, db.exec("select value from names where id = 1"))
+        assertEquals(empty, db.exec("select value from names where id = 4"))
+        assertEquals(listOf(row(s("Jane")), row(s("Jill"))), db.exec("select value from names where id <= 3"))
+        assertEquals(listOf(row(s("Jane"))), db.exec("select value from names where id < 3"))
 
         assertEquals(empty, db.exec("delete from names"))
         assertEquals(empty, db.exec("select * from names"))
