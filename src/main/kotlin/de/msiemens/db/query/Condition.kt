@@ -26,7 +26,7 @@ data class Condition(
             Operator.LIKE -> like((value as StringValue).value, (row.values[idx] as StringValue).value)
         }
 
-        return (value && andClauses.all { it.eval(row, idx) }) || andClauses.any { it.eval(row, idx) }
+        return (value && andClauses.all { it.eval(row, idx) }) || orClauses.any { it.eval(row, idx) }
     }
 
     private fun like(pattern: String, value: String): Boolean {

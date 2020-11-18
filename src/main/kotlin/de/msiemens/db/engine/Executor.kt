@@ -98,11 +98,11 @@ class Executor {
         if (condition != null) {
             rows = condition.andClauses
                 .map { select(table, it).toSet() }
-                .fold(rows, { acc, set -> acc union set })
+                .fold(rows, { acc, set -> acc intersect set })
 
             rows = condition.orClauses
                 .map { select(table, it).toSet() }
-                .fold(rows, { acc, set -> acc intersect set })
+                .fold(rows, { acc, set -> acc union set })
         }
 
         return rows
